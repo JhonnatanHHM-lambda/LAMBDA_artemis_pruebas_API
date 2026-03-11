@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+
+  api:
+    build: .
+    container_name: artemis_api
+    restart: always
+    networks:
+      - artemis_network
+
+  nginx:
+    image: nginx:latest
+    container_name: artemis_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    networks:
+      - artemis_network
+
+networks:
+  artemis_network:

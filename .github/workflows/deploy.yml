@@ -1,0 +1,90 @@
+name: CI/CD Artemis API
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  ci:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest flake8 black isort bandit
+
+      - name: Lint code (flake8)
+        run: |
+          flake8 app --max-line-length=120
+
+      - name: Check formatting (black)
+        run: |
+          black --check .
+
+      - name: Check imports (isort)
+        run: |
+          isort --check-only .
+
+      - name: Security scan (bandit)
+        run: |
+          bandit -r app
+
+      - name: Run tests
+        run: |
+          pytest
+
+      - name: Build Docker image
+        run: |
+          docker build -t artemis-api:test .
+
+  deploy:
+
+    needs: ci
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+
+            cd /srv/apps/ArtemisPrub
+
+            echo "Updating repository..."
+            git pull origin main
+
+            echo "Rebuilding containers..."
+            docker compose down
+            docker compose up -d --build
+
+            echo "Cleaning unused images..."
+            docker image prune -f
