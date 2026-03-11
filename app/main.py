@@ -59,7 +59,7 @@ def home():
 
                 <h1>🚀 Artemis API</h1>
 
-                <p>La API está funcionando correctamente.</p>
+                <p>La API fue deployed automaticamente de forma correcta.</p>
 
                 <div class="status">
                     ❤️ Status: Online
