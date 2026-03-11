@@ -1,7 +1,8 @@
+import platform
+from datetime import datetime
+
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from datetime import datetime
-import platform
 
 app = FastAPI(
     title="Artemis API", description="Servicio API para Artemis", version="1.0.0"
