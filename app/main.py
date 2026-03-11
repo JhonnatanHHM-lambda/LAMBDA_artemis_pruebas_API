@@ -4,9 +4,7 @@ from datetime import datetime
 import platform
 
 app = FastAPI(
-    title="Artemis API",
-    description="Servicio API para Artemis",
-    version="1.0.0"
+    title="Artemis API", description="Servicio API para Artemis", version="1.0.0"
 )
 
 
@@ -97,11 +95,7 @@ def home():
 
 @app.get("/health")
 def health():
-    return {
-        "status": "ok",
-        "service": "artemis-api",
-        "version": "1.0.0"
-    }
+    return {"status": "ok", "service": "artemis-api", "version": "1.0.0"}
 
 
 @app.get("/info")
@@ -110,5 +104,5 @@ def info():
         "service": "Artemis API",
         "version": "1.0.0",
         "environment": "production",
-        "server_time": datetime.utcnow()
+        "server_time": datetime.utcnow(),
     }
