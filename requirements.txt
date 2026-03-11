@@ -4,3 +4,4 @@ black
 isort
 bandit
 uvicorn
+fastapi
