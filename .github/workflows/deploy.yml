@@ -80,7 +80,7 @@ jobs:
             cd /srv/apps/ArtemisPrub
 
             echo "Updating repository..."
-            git pull origin main
+            git pull origin master
 
             echo "Rebuilding containers..."
             docker compose down
